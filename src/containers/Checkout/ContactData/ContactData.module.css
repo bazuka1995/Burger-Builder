@@ -8,11 +8,6 @@
     box-sizing: border-box;
 }
 
-.Input {
-    display: block;
-    margin: 10px;
-}
-
 .Input:hover {
     box-shadow: 9px 5px 5px #ccc;
 }
