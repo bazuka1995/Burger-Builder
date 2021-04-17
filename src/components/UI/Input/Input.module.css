@@ -29,3 +29,8 @@
 .InputElement:hover {
     box-shadow: 2px 2px 2px #ccc;
 }
+
+.Invalid {
+    border: 1px solid red;
+    background-color: #fda49a;
+}

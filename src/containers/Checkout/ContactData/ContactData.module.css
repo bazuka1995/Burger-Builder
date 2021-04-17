@@ -12,6 +12,27 @@
     box-shadow: 9px 5px 5px #ccc;
 }
 
+.Button {
+    background-color: transparent;
+    border: none;
+    color: white;
+    outline: none;
+    cursor: pointer;
+    font: inherit;
+    padding: 10px;
+    margin: 10px;
+    font-weight: bold;
+}
+
+.Button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+.Button:not(disabled) {
+    color: #5C9210;
+}
+
 @media (min-width: 600px) {
     .ContactData {
         width: 500px;
