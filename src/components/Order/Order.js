@@ -1,5 +1,7 @@
 import React from "react";
 import classes from "./Order.module.css";
+import * as actions from "../../store/actions/index";
+import { connect } from "react-redux";
 
 const order = (props) => {
   const ingredients = [];
@@ -30,8 +32,18 @@ const order = (props) => {
       <p>
         Price: <strong>${Number.parseFloat(props.price).toFixed(2)}</strong>
       </p>
+      <button className={classes.Button} onClick={props.deleteOrder}>Delete</button>
     </div>
   );
 };
 
-export default order;
+const mapDispatchToProps = (dispatch) => {
+  return {
+    deleteOrder: () => dispatch(actions.deleteOrder())
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(order);

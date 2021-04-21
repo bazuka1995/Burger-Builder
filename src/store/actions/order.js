@@ -1,5 +1,6 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
+import { toast } from 'react-toastify';
 
 export const purchaseBurgerSuccess = ( id, orderData ) => {
     return {
@@ -27,8 +28,16 @@ export const purchaseBurger = ( orderData ) => {
         dispatch( purchaseBurgerStart() );
         axios.post( '/orders.json', orderData )
             .then( response => {
-                console.log( response.data );
                 dispatch( purchaseBurgerSuccess( response.data.name, orderData ) );
+                toast.success('Order has been successfully submitted', {
+                    position: "bottom-center",
+                    autoClose: 2500,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                });
             } )
             .catch( error => {
                 dispatch( purchaseBurgerFail( error ) );
@@ -81,3 +90,9 @@ export const fetchOrders = () => {
             } );
     };
 };
+
+export const deleteOrder = (id) => {
+    return dispatch => {
+        console.log(id)
+    }
+}
