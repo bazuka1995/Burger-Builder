@@ -38,6 +38,12 @@
     color: #944317;
 }
 
+.Error {
+    color: #991f6a;
+    font-weight: bold;
+    font-size: larger;
+}
+
 @media (min-width: 600px) {
     .ContactData {
         width: 500px;

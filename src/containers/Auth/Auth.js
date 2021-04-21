@@ -2,7 +2,8 @@ import React, { Component } from "react";
 import Input from "../../components/UI/Input/Input";
 import classes from "./Auth.module.css";
 import * as actions from "../../store/actions/index";
-import { connect } from 'react-redux';
+import { connect } from "react-redux";
+import Spinner from "../../components/UI/Spinner/Spinner";
 
 class Auth extends Component {
   state = {
@@ -26,7 +27,7 @@ class Auth extends Component {
         elementConfig: {
           type: "password",
           placeholder: "Enter your password",
-          minLength: "6"
+          minLength: "6",
         },
         value: "",
         validation: {
@@ -35,66 +36,73 @@ class Auth extends Component {
         },
         valid: false,
         touched: false,
-      }
+      },
     },
-    isSignup: true
+    isSignup: true,
   };
 
   checkValidity(value, rules) {
     let isValid = true;
     if (!rules) {
-        return true;
+      return true;
     }
-    
+
     if (rules.required) {
-        isValid = value.trim() !== '' && isValid;
+      isValid = value.trim() !== "" && isValid;
     }
 
     if (rules.minLength) {
-        isValid = value.length >= rules.minLength && isValid
+      isValid = value.length >= rules.minLength && isValid;
     }
 
     if (rules.maxLength) {
-        isValid = value.length <= rules.maxLength && isValid
+      isValid = value.length <= rules.maxLength && isValid;
     }
 
     if (rules.isEmail) {
-        const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-        isValid = pattern.test(value) && isValid
+      const pattern = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+      isValid = pattern.test(value) && isValid;
     }
 
     if (rules.isNumeric) {
-        const pattern = /^\d+$/;
-        isValid = pattern.test(value) && isValid
+      const pattern = /^\d+$/;
+      isValid = pattern.test(value) && isValid;
     }
 
     return isValid;
-}
+  }
 
   inputChangedHandler = (event, controlName) => {
-      const updatedControls = {
-          ...this.state.controls,
-          [controlName]: {
-              ...this.state.controls[controlName],
-              value: event.target.value,
-              valid: this.checkValidity(event.target.value, this.state.controls[controlName].validation),
-              touched: true
-          }
-      }
+    const updatedControls = {
+      ...this.state.controls,
+      [controlName]: {
+        ...this.state.controls[controlName],
+        value: event.target.value,
+        valid: this.checkValidity(
+          event.target.value,
+          this.state.controls[controlName].validation
+        ),
+        touched: true,
+      },
+    };
 
-      this.setState({controls: updatedControls})
-  }
+    this.setState({ controls: updatedControls });
+  };
 
   submitHandler = (event) => {
     event.preventDefault();
-    this.props.onAuth(this.state.controls.email.value, this.state.controls.password.value, this.state.isSignup);
-  }
+    this.props.onAuth(
+      this.state.controls.email.value,
+      this.state.controls.password.value,
+      this.state.isSignup
+    );
+  };
 
   switchAuthModeHandler = () => {
-    this.setState(prevState => {
-      return {isSignup: !prevState.isSignup};
-    })
-  }
+    this.setState((prevState) => {
+      return { isSignup: !prevState.isSignup };
+    });
+  };
 
   render() {
     const formElementsArray = [];
@@ -105,7 +113,7 @@ class Auth extends Component {
       });
     }
 
-    const form = formElementsArray.map((formElement) => (
+    let form = formElementsArray.map((formElement) => (
       <Input
         key={formElement.id}
         elementType={formElement.config.elementType}
@@ -118,28 +126,75 @@ class Auth extends Component {
       />
     ));
 
+    if (this.props.loading) {
+      form = <Spinner />;
+    }
+
+    let errorMessage = null;
+    if (this.props.error) {
+      switch (this.props.error.message) {
+        case "EMAIL_EXISTS":
+          errorMessage = (
+            <p className={classes.Error}>Email already exists on our system</p>
+          );
+          break;
+        case "EMAIL_NOT_FOUND":
+          errorMessage = (
+            <p className={classes.Error}>
+              THis email doesn't exist. Please register a new account.
+            </p>
+          );
+          break;
+        case "INVALID_PASSWORD":
+          errorMessage = (
+            <p className={classes.Error}>
+              This password is invalid. Please try again.
+            </p>
+          );
+          break;
+        case "TOO_MANY_ATTEMPTS_TRY_LATER":
+          errorMessage = (
+            <p className={classes.Error}>We have blocked all requests due to unusual activity. Try again later.</p>
+          )
+          break;
+        default:
+          errorMessage = (
+            <p className={classes.Error}>{this.props.error.message}</p>
+          );
+      }
+    }
+
     return (
-      <div className={classes.Auth} >
+      <div className={classes.Auth}>
+        {errorMessage}
         <form onSubmit={this.submitHandler}>
           {form}
           <button type="submit" className={classes.Button}>
             Submit
           </button>
         </form>
-        <button 
-          className={classes.Switch}
-          onClick={this.switchAuthModeHandler}>
-            {this.state.isSignup ? 'Already have an account?' : "Register an account"}
+        <button className={classes.Switch} onClick={this.switchAuthModeHandler}>
+          {this.state.isSignup
+            ? "Already have an account?"
+            : "Register an account"}
         </button>
       </div>
     );
   }
 }
 
-const mapDispatchToProps = dispatch => {
+const mapStateToProps = (state) => {
   return {
-    onAuth: (email, password, isSignup) => dispatch(actions.auth(email, password, isSignup))
-  }
-}
+    loading: state.auth.loading,
+    error: state.auth.error,
+  };
+};
 
-export default connect(null, mapDispatchToProps)(Auth);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onAuth: (email, password, isSignup) =>
+      dispatch(actions.auth(email, password, isSignup)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);
