@@ -1,6 +1,5 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
-import { toast } from 'react-toastify';
 
 export const purchaseBurgerSuccess = ( id, orderData ) => {
     return {
@@ -29,15 +28,6 @@ export const purchaseBurger = ( orderData, token ) => {
         axios.post( '/orders.json?auth=' + token, orderData )
             .then( response => {
                 dispatch( purchaseBurgerSuccess( response.data.name, orderData ) );
-                toast.success('Order has been successfully submitted', {
-                    position: "bottom-center",
-                    autoClose: 2500,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                });
             } )
             .catch( error => {
                 dispatch( purchaseBurgerFail( error ) );
@@ -71,10 +61,11 @@ export const fetchOrdersStart = () => {
     };
 };
 
-export const fetchOrders = (token) => {
+export const fetchOrders = (token, userId) => {
     return dispatch => {
         dispatch(fetchOrdersStart());
-        axios.get( '/orders.json?auth=' + token)
+        const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId + '"';
+        axios.get( '/orders.json' + queryParams)
             .then( res => {
                 const fetchedOrders = [];
                 for ( let key in res.data ) {
