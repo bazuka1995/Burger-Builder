@@ -1,5 +1,9 @@
 import * as actionTypes from "./actionTypes";
 import axios from "axios";
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
+
+toast.configure();
 
 export const authStart = () => {
   return {
@@ -66,6 +70,9 @@ export const auth = (email, password, isSignup) => {
         localStorage.setItem("userId", response.data.localId);
         dispatch(authSuccess(response.data.idToken, response.data.localId));
         dispatch(checkAuth(response.data.expiresIn));
+        toast.success("You have been logged in successfully", {
+          autoClose: 2000
+        })
       })
       .catch((err) => {
         dispatch(authFail(err.response.data.error));

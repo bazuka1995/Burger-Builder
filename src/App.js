@@ -8,6 +8,7 @@ import Auth from "./containers/Auth/Auth";
 import Logout from "./containers/Auth/Logout/Logout";
 import { connect } from "react-redux";
 import * as actions from "./store/actions/index";
+import { ToastContainer } from 'react-toastify';
 
 class App extends Component {
   componentDidMount() {
@@ -40,6 +41,13 @@ class App extends Component {
       <div>
         <Layout>
           <Switch>{routes}</Switch>
+          <ToastContainer 
+            newestOnTop
+            closeOnClick
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
         </Layout>
       </div>
     );

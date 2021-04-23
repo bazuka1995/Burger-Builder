@@ -1,5 +1,8 @@
 import * as actionTypes from './actionTypes';
 import axios from '../../axios-orders';
+import 'react-toastify/dist/ReactToastify.css'
+import { toast } from 'react-toastify';
+toast.configure();
 
 export const purchaseBurgerSuccess = ( id, orderData ) => {
     return {
@@ -28,6 +31,9 @@ export const purchaseBurger = ( orderData, token ) => {
         axios.post( '/orders.json?auth=' + token, orderData )
             .then( response => {
                 dispatch( purchaseBurgerSuccess( response.data.name, orderData ) );
+                toast.success("Your order has been placed", {
+                    autoClose: 2000
+                })
             } )
             .catch( error => {
                 dispatch( purchaseBurgerFail( error ) );
