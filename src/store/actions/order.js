@@ -32,7 +32,7 @@ export const purchaseBurger = ( orderData, token ) => {
             .then( response => {
                 dispatch( purchaseBurgerSuccess( response.data.name, orderData ) );
                 toast.success("Your order has been placed", {
-                    autoClose: 2000
+                    autoClose: 2500
                 })
             } )
             .catch( error => {

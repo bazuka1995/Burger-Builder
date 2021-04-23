@@ -71,7 +71,7 @@ export const auth = (email, password, isSignup) => {
         dispatch(authSuccess(response.data.idToken, response.data.localId));
         dispatch(checkAuth(response.data.expiresIn));
         toast.success("You have been logged in successfully", {
-          autoClose: 2000
+          autoClose: 2500
         })
       })
       .catch((err) => {
